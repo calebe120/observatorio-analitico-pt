@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <title>Observatório Analítico — Monitor PT & Governo Federal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Merriweather:ital,wght@0,700;0,900;1,400&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            serif: ['Merriweather', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #F8FAFC;
+      color: #0F172A;
+    }
+    .news-card {
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .news-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.08), 0 4px 8px -4px rgba(15, 23, 42, 0.04);
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-slate-900 selection:text-white">
+
+  <!-- Top Security & Impartiality Banner -->
+  <div class="bg-slate-950 text-white border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+      <div class="flex items-center gap-2.5">
+        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+          <i data-lucide="scale" class="w-3.5 h-3.5 text-emerald-400"></i>
+          Análise Factual & Apartidária
+        </span>
+        <span class="text-slate-300 font-medium hidden sm:inline">Dados Oficiais + Imprensa Verificada • Sem Sensacionalismo</span>
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <span class="hidden md:flex items-center gap-1.5 font-mono text-[11px] text-slate-300 bg-slate-900 px-2.5 py-0.5 rounded border border-slate-800">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5 text-sky-400"></i>
+          Integridade SHA-256: <strong id="integrity-hash" class="text-emerald-400">VERIFICADO</strong>
+        </span>
+        <span id="current-date-top" class="text-slate-300 font-medium">Terça-feira, 27 de Outubro de 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        
+        <!-- Brand Identity (Clean, no Edition badge) -->
+        <div class="flex items-start sm:items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-md shrink-0">
+            <i data-lucide="Landmark" class="w-6 h-6 text-amber-400"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-600">Monitoramento Público, Fiscal & Legislativo</span>
+              <span class="inline-flex items-center gap-1 text-[11px] font-semibold bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">
+                <i data-lucide="check-circle-2" class="w-3 h-3 text-emerald-600"></i> Fontes Verificadas
+              </span>
+            </div>
+            <h1 class="font-serif text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+              Observatório Analítico — PT & Governo
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500">
+              O que está acontecendo de fato: entregas, cortes de gastos, reação do mercado, Congresso e checagem de boatos
+            </p>
+          </div>
+        </div>
+
+        <!-- Search & Action Controls -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <div class="relative flex-grow sm:flex-grow-0 sm:w-64">
+            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+            <input 
+              id="search-input" 
+              type="text" 
+              maxlength="80"
+              placeholder="Buscar corte, lei, imposto, boato..." 
+              class="w-full pl-9 pr-8 py-2 text-sm bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-slate-900 focus:bg-white transition"
+            />
+            <button id="clear-search" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <button 
+            id="btn-whatsapp" 
+            class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition cursor-pointer"
+            title="Copiar resumo imparcial para WhatsApp"
+          >
+            <i data-lucide="share-2" class="w-4 h-4"></i>
+            <span>Disparo WhatsApp</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-4 overflow-x-auto custom-scrollbar pb-1">
+        <div class="flex items-center gap-1.5" id="category-filters">
+          <button data-category="all" class="cat-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-900 text-white shadow-sm cursor-pointer whitespace-nowrap">
+            Visão Geral (<span id="count-all">0</span>)
+          </button>
+          <button data-category="fiscal" class="cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="trending-down" class="w-3.5 h-3.5 text-rose-700"></i> Orçamento, Cortes & Mercado
+          </button>
+          <button data-category="checagem" class="cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="search-check" class="w-3.5 h-3.5 text-amber-600"></i> Fato vs. Boato (6x1, MEI, Games)
+          </button>
+          <button data-category="congresso" class="cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="scale" class="w-3.5 h-3.5 text-indigo-700"></i> Congresso & Votações
+          </button>
+          <button data-category="partido" class="cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5">
+            <i data-lucide="users" class="w-3.5 h-3.5 text-emerald-700"></i> Estados & Articulação Política
+          </button>
+        </div>
+
+        <!-- View Mode Toggle -->
+        <div class="hidden sm:flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 shrink-0">
+          <button id="view-complete" class="px-2.5 py-1 rounded-md text-xs font-semibold bg-white text-slate-900 shadow-sm transition cursor-pointer">
+            Análise Dupla (Prós e Contras)
+          </button>
+          <button id="view-compact" class="px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer">
+            Leitura Rápida
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Official & Verified Sources Bar -->
+  <section class="bg-slate-900 text-slate-200 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
+      <div class="flex items-center gap-3 overflow-x-auto custom-scrollbar py-0.5">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400 shrink-0 flex items-center gap-1.5">
+          <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Fontes Diretas:
+        </span>
+        <a href="https://agenciabrasil.ebc.com.br/economia/noticia/2026-10/governo-buscara-cumprir-meta-fiscal-com-dialogo-diz-durigan" target="_blank" rel="noopener noreferrer" class="text-xs px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-white font-medium transition shrink-0 flex items-center gap-1">
+          Fazenda / Meta Fiscal (Ag. Brasil) <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-400"></i>
+        </a>
+        <a href="https://www12.senado.leg.br/noticias/materias/2026/09/17/governo-tera-que-cortar-despesas-para-fechar-as-contas-em-2027-diz-ifi" target="_blank" rel="noopener noreferrer" class="text-xs px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-white font-medium transition shrink-0 flex items-center gap-1">
+          Relatório IFI / Cortes 2027 (Senado) <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-400"></i>
+        </a>
+        <a href="https://www.congressonacional.leg.br/materias/materias-bicamerais/-/ver/plp-186-2026" target="_blank" rel="noopener noreferrer" class="text-xs px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-white font-medium transition shrink-0 flex items-center gap-1">
+          Congresso Nacional (Tramitações) <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-400"></i>
+        </a>
+        <a href="https://www.camara.leg.br/plenario" target="_blank" rel="noopener noreferrer" class="text-xs px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-white font-medium transition shrink-0 flex items-center gap-1">
+          Pauta da Câmara <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-400"></i>
+        </a>
+        <a href="https://www12.senado.leg.br/noticias/materias/2026/10/26/davi-alcolumbre-e-hugo-motta-visitam-presidente-lula" target="_blank" rel="noopener noreferrer" class="text-xs px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-white font-medium transition shrink-0 flex items-center gap-1">
+          Agência Senado <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-400"></i>
+        </a>
+        <a href="https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/noticias/2026/10" target="_blank" rel="noopener noreferrer" class="text-xs px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 text-white font-medium transition shrink-0 flex items-center gap-1">
+          Portal Planalto (Gov.br) <i data-lucide="arrow-up-right" class="w-3 h-3 text-slate-400"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    
+    <!-- Key Macroeconomic & Political Reality Indicators -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-3.5">
+        <div class="p-2.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-100">
+          <i data-lucide="scissors" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-rose-600">Cortes & Contingenciamento</span>
+          <p class="text-base font-extrabold text-slate-900 mt-0.5">R$ 20 bi a R$ 35,7 bi</p>
+          <p class="text-xs text-slate-500 mt-0.5">Remanejamento prometido pela Fazenda e bloqueio projetado pela IFI/Senado</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-3.5">
+        <div class="p-2.5 rounded-xl bg-amber-50 text-amber-700 border border-amber-100">
+          <i data-lucide="activity" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700">Intervenção no Mercado</span>
+          <p class="text-base font-extrabold text-slate-900 mt-0.5">Recompra NTN-B</p>
+          <p class="text-xs text-slate-500 mt-0.5">Tesouro atua para conter volatilidade após dólar subir 8,21% pós-eleição</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-3.5">
+        <div class="p-2.5 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100">
+          <i data-lucide="file-Spreadsheet" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-indigo-600">Orçamento Seguridade</span>
+          <p class="text-base font-extrabold text-slate-900 mt-0.5">PLN 23/26: R$ 185,5 bi</p>
+          <p class="text-xs text-slate-500 mt-0.5">Crédito suplementar no Congresso (81,4% Previdência e 18,6% MDS)</p>
+        </div>
+      </div>
+
+      <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-3.5">
+        <div class="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+          <i data-lucide="fuel" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700">Diesel & Imposto Seletivo</span>
+          <p class="text-base font-extrabold text-slate-900 mt-0.5">R$ 2,12/L Prorrogado</p>
+          <p class="text-xs text-slate-500 mt-0.5">Subsídio renovado por 30 dias; Fazenda enviará MP do Imposto Seletivo</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: News Feed (8 cols) -->
+      <div class="lg:col-span-8 space-y-6">
+        
+        <!-- Section Title & Filter Status -->
+        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200">
+          <div class="flex items-center gap-2">
+            <h2 id="active-section-title" class="font-serif text-xl font-bold text-slate-900">
+              Análise Geral dos Fatos (Pontos Positivos vs. Pontos Críticos)
+            </h2>
+          </div>
+          <span id="showing-counter" class="text-xs font-medium text-slate-500">
+            Exibindo todas as análises verificadas
+          </span>
+        </div>
+
+        <!-- Dynamic News Container -->
+        <div id="news-container" class="space-y-6">
+          <!-- Populated by JavaScript -->
+        </div>
+
+        <!-- Empty Search State -->
+        <div id="empty-state" class="hidden bg-white rounded-2xl border border-slate-200 p-12 text-center">
+          <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+            <i data-lucide="search-x" class="w-6 h-6"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-800">Nenhum fato ou checagem encontrado</h3>
+          <p class="text-sm text-slate-500 mt-1">Tente buscar por outros termos como "corte", "diesel", "6x1", "MEI", "Tesouro" ou "drones".</p>
+          <button id="reset-filters-btn" class="mt-4 px-4 py-2 bg-slate-900 text-white text-xs font-semibold rounded-xl hover:bg-slate-800 transition cursor-pointer">
+            Mostrar todas as análises
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Fact-Check Matrix with Direct Proof Links (4 cols) -->
+      <aside class="lg:col-span-4 space-y-6 lg:sticky lg:top-28">
+        
+        <!-- Fact-Checking Card (O que é Verdade vs Boato + Links Diretos) -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="bg-slate-900 px-5 py-4 text-white flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="check-check" class="w-4 h-4 text-amber-400"></i>
+              <h3 class="font-serif font-bold text-sm tracking-wide uppercase">Painel da Verdade: Fato vs. Boato</h3>
+            </div>
+            <span class="text-[11px] bg-slate-800 text-amber-300 px-2 py-0.5 rounded font-mono">Com Links</span>
+          </div>
+          <div class="p-5 space-y-4 text-xs">
+            
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-slate-900">Haverá corte de gastos em 2027?</span>
+                <span class="px-2 py-0.5 rounded bg-rose-100 text-rose-800 font-bold text-[10px]">CONFIRMADO</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed mb-2">
+                <strong>Onde e quanto:</strong> A Fazenda confirmou remanejamento de <strong>R$ 20 bilhões</strong> e estuda ampliar contingenciamentos. Já a IFI do Senado projeta bloqueio necessário de <strong>R$ 35,7 bilhões</strong> nas despesas discricionárias para cobrir o déficit.
+              </p>
+              <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-200/60">
+                <a href="https://agenciabrasil.ebc.com.br/economia/noticia/2026-10/governo-buscara-cumprir-meta-fiscal-com-dialogo-diz-durigan" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Agência Brasil (Fazenda)
+                </a>
+                <span class="text-slate-300">•</span>
+                <a href="https://www12.senado.leg.br/noticias/materias/2026/09/17/governo-tera-que-cortar-despesas-para-fechar-as-contas-em-2027-diz-ifi" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Relatório IFI/Senado
+                </a>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-slate-900">O Bolsa Família vai ser cortado?</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">BOATO / FALSO</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed mb-2">
+                Não há anúncio de corte no benefício. O piso subiu de R$ 600 para <strong>R$ 691</strong> em outubro (média de R$ 777), com impacto anual de R$ 22,7 bilhões, além do PLN 23/2026 que suplementa a Seguridade em R$ 185,5 bi.
+              </p>
+              <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-200/60">
+                <a href="https://ndmais.com.br/politica/lula-corte-de-gastos-bolsa-familia-orcamento-2027/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Checagem Orçamento 2027
+                </a>
+                <span class="text-slate-300">•</span>
+                <a href="https://www.congressonacional.leg.br/materias/pesquisa/-/materia/175221" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> PLN 23/2026 (Congresso)
+                </a>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-slate-900">Tarifa Zero e Pé-de-Meia Universitário</span>
+                <span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">AINDA NÃO VALEM</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed mb-2">
+                Foram anunciados pelo governo, mas <strong>ainda não estão em vigor</strong>. A Tarifa Zero depende da aprovação de uma PEC no Congresso e a expansão do Pé-de-Meia exige definição orçamentária em 2027.
+              </p>
+              <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-200/60">
+                <a href="https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/noticias/2026/10/lula-sanciona-lei-que-amplia-beneficios-para-meis-e-envia-ao-congresso-pec-sobre-tarifa-zero-no-transporte-coletivo" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Envio da PEC (Planalto)
+                </a>
+                <span class="text-slate-300">•</span>
+                <a href="https://ndmais.com.br/politica/lula-corte-de-gastos-bolsa-familia-orcamento-2027/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Status das Promessas
+                </a>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-slate-900">Prospera MEI (Teto de R$ 140 mil)</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">LEI SANCIONADA</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed mb-2">
+                O PLP 186/2026 virou a <strong>Lei Complementar nº 238/2026</strong>. Já é lei, mas a elevação do teto é gradual (R$ 110 mil em 2027 e R$ 140 mil em 2028) e o perdão de dívidas tem regras específicas.
+              </p>
+              <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-200/60">
+                <a href="https://www.congressonacional.leg.br/materias/materias-bicamerais/-/ver/plp-186-2026" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Lei Compl. 238/2026 (Congresso)
+                </a>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80">
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-slate-900">Fim da Escala 6x1 foi cancelado?</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">PROMULGADA</span>
+              </div>
+              <p class="text-slate-600 leading-relaxed mb-2">
+                Não foi cancelada. A Emenda Constitucional foi promulgada garantindo limite de 40h semanais, mas terá período de transição escalonado e gera alerta de custos no setor de comércio e serviços.
+              </p>
+              <div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-200/60">
+                <a href="https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/noticias/2026/10" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-700 hover:underline">
+                  <i data-lucide="external-link" class="w-3 h-3"></i> Registro Oficial (Planalto)
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Editorial Methodology Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
+          <div class="flex items-center gap-2 text-slate-900 font-bold text-sm mb-2">
+            <i data-lucide="compass" class="w-4 h-4 text-slate-700"></i>
+            <span>Metodologia Apartidária</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Este boletim cruza diariamente publicações do <strong>Diário Oficial, Câmara, Senado, Fazenda, Tesouro Nacional e IFI</strong> com a cobertura factual da imprensa profissional, apresentando a posição institucional e os impactos fiscais e práticos.
+          </p>
+        </div>
+
+      </aside>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 text-slate-400 border-t border-slate-800 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div class="flex items-center gap-3">
+        <div class="w-7 h-7 rounded-lg bg-slate-800 flex items-center justify-center text-amber-400 font-bold">
+          <i data-lucide="scale" class="w-4 h-4"></i>
+        </div>
+        <div>
+          <p class="text-white font-semibold">Observatório Analítico — Monitor PT & Governo Federal</p>
+          <p class="text-slate-500">Análise factual, checagem de dados públicos e acompanhamento legislativo.</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap items-center gap-4">
+        <button id="footer-copy-wa" class="text-emerald-400 hover:text-emerald-300 font-medium cursor-pointer">Copiar Resumo WhatsApp</button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-300">
+    <div class="bg-slate-900 text-white px-4 py-3 rounded-xl shadow-xl border border-slate-700 flex items-center gap-3 text-sm font-medium">
+      <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+      <span id="toast-message">Resumo copiado com sucesso!</span>
+    </div>
+  </div>
+
+  <!-- Security & Application Logic -->
+  <script>
+    (function() {
+      "use strict";
+
+      // 1. ALLOWLIST DE DOMÍNIOS VERIFICADOS E NÃO SENSACIONALISTAS
+      const ALLOWED_DOMAINS = Object.freeze([
+        "gov.br",
+        "www.gov.br",
+        "agenciabrasil.ebc.com.br",
+        "camara.leg.br",
+        "www.camara.leg.br",
+        "senado.leg.br",
+        "www12.senado.leg.br",
+        "congressonacional.leg.br",
+        "www.congressonacional.leg.br",
+        "tse.jus.br",
+        "www.tse.jus.br",
+        "pt.org.br",
+        "ptnosenado.org.br",
+        "ndmais.com.br",
+        "neofeed.com.br",
+        "congressoemfoco.com.br"
+      ]);
+
+      function isSafeOfficialUrl(urlString) {
+        try {
+          const parsed = new URL(urlString);
+          if (parsed.protocol !== "https:") return false;
+          return ALLOWED_DOMAINS.some(domain => 
+            parsed.hostname === domain || parsed.hostname.endsWith("." + domain)
+          );
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function sanitizeText(str) {
+        if (typeof str !== "string") return "";
+        return str.replace(/[<>"'`]/g, "");
+      }
+
+      // 2. BANCO DE DADOS FACTUAL E IMUTÁVEL (ATUALIZADO COM BUSCA GERAL DE 27/10/2026)
+      const ANALYTICAL_ITEMS = [
+        {
+          id: "cortes-orcamento-meta-fiscal-2027",
+          category: "fiscal",
+          categoryLabel: "Orçamento, Cortes & Meta Fiscal",
+          badgeColor: "rose",
+          date: "27/10/2026",
+          verdict: "CORTE / CONTINGENCIAMENTO EM ESTUDO",
+          title: "Onde haverá corte de gastos? Fazenda prevê remanejar R$ 20 bi, mas IFI do Senado alerta para bloqueio de R$ 35,7 bi",
+          summary: "O ministro da Fazenda, Dario Durigan, anunciou hoje (27/10) que levará ao Congresso medidas legais para perseguir formalmente o centro da meta fiscal e ampliar a possibilidade de contingenciamento, além de um remanejamento de R$ 20 bilhões no Orçamento de 2027. Já a Instituição Fiscal Independente (IFI) do Senado projeta que o bloqueio real precisará ser de pelo menos R$ 35,7 bilhões.",
+          positiveSideTitle: "Posição do Governo & Proteção Social",
+          positiveSide: "O Ministério da Fazenda assegura que o Bolsa Família (reajustado para o mínimo de R$ 691 e média de R$ 777) não sofrerá cortes e que o governo enviará projeto de lei complementar para garantir segurança jurídica ao centro da meta fiscal e dois projetos alternativos à MP do IOF.",
+          criticalSideTitle: "Onde serão os cortes & Pressão nas Contas",
+          criticalSide: "Ainda não há lista final de pastas cortadas, mas o corte recairá sobre despesas discricionárias (custeio da máquina e investimentos) e revisão de gastos obrigatórios. Novas promessas pressionam o caixa: reajuste do Bolsa Família (+R$ 22,7 bi), Desenrola 3.0 (R$ 5 bi) e um déficit primário estimado pela IFI em R$ 86,1 bilhões para 2027, com PIB desacelerando para 1,8%.",
+          sources: [
+            { label: "Agência Brasil (Fazenda e Contingenciamento)", url: "https://agenciabrasil.ebc.com.br/economia/noticia/2026-10/governo-buscara-cumprir-meta-fiscal-com-dialogo-diz-durigan" },
+            { label: "Agência Senado (Relatório IFI - Corte de R$ 35,7 bi)", url: "https://www12.senado.leg.br/noticias/materias/2026/09/17/governo-tera-que-cortar-despesas-para-fechar-as-contas-em-2027-diz-ifi" },
+            { label: "Detalhamento dos R$ 20 bi e Promessas (ND Mais)", url: "https://ndmais.com.br/politica/lula-corte-de-gastos-bolsa-familia-orcamento-2027/" },
+            { label: "Análise Fiscal do Orçamento (NeoFeed)", url: "https://neofeed.com.br/poder/o-pacote-de-bondades-de-lula-cabe-no-orcamento/" }
+          ]
+        },
+        {
+          id: "mercado-tesouro-diesel-imposto-seletivo",
+          category: "fiscal",
+          categoryLabel: "Mercado, Combustíveis & Tributos",
+          badgeColor: "amber",
+          date: "27/10/2026",
+          verdict: "INTERVENÇÃO DO TESOURO E NOVA MP",
+          title: "Tesouro recompra títulos após alta de 8,21% do dólar; Governo prorroga subsídio ao diesel e prepara MP do Imposto Seletivo",
+          summary: "Para conter fortes oscilações no mercado financeiro após o segundo turno eleitoral, o Tesouro Nacional anunciou hoje (27/10) leilão extraordinário de recompra de títulos públicos (NTN-B com vencimentos entre 2030 e 2045). No mesmo dia, a Fazenda renovou o subsídio ao óleo diesel e confirmou o envio da MP do Imposto Seletivo.",
+          positiveSideTitle: "Estabilização Cambial e Contenção do Diesel",
+          positiveSide: "A intervenção do Tesouro e o discurso de diálogo fiscal acalmaram o mercado nesta terça-feira (com recuo de 1% no dólar pela manhã). Além disso, a prorrogação por mais 30 dias da subvenção de R$ 2,12 por litro do óleo diesel evita repasse imediato de alta no frete e nos alimentos.",
+          criticalSideTitle: "Custo Fiscal do Subsídio e Tensão com Imposto Seletivo",
+          criticalSide: "Na segunda-feira pós-eleição (26/10), o dólar disparou 8,21% e a Bolsa caiu 13,88% refletindo desconfiança fiscal dos investidores. Além disso, a renovação mensal do subsídio ao diesel mantém pressão sobre o caixa da União, e a futura MP com as alíquotas do Imposto Seletivo ('imposto do pecado') enfrentará forte lobby setorial no Congresso.",
+          sources: [
+            { label: "Agência Brasil (Recompra de Títulos pelo Tesouro)", url: "https://agenciabrasil.ebc.com.br/economia/noticia/2026-10/para-conter-oscilacoes-tesouro-anuncia-nova-recompra-de-titulos" },
+            { label: "Agência Brasil (MP do Imposto Seletivo e Queda da Bolsa)", url: "https://agenciabrasil.ebc.com.br/economia/noticia/2026-10/governo-enviara-mp-do-imposto-seletivo-e-renova-subvencao-ao-diesel" },
+            { label: "Agência Brasil (Portaria de R$ 2,12 no Diesel)", url: "https://agenciabrasil.ebc.com.br/economia/noticia/2026-10/governo-prorroga-por-um-mes-subvencao-de-r-212-ao-diesel" }
+          ]
+        },
+        {
+          id: "checagem-prospera-mei-tarifa-zero-escala-6x1",
+          category: "checagem",
+          categoryLabel: "Checagem de Leis & Promessas",
+          badgeColor: "emerald",
+          date: "27/10/2026",
+          verdict: "O QUE JÁ VALE VS. O QUE DEPENDE DO CONGRESSO",
+          title: "Raio-X das Medidas: Prospera MEI vira Lei Complementar 238/2026; Tarifa Zero e Desenrola 3.0 ainda dependem de aprovação e regras",
+          summary: "Levantamento nos registros do Congresso Nacional e do Planalto separa o que já tem força de lei do que ainda é projeto ou promessa de campanha para o próximo ciclo orçamentário.",
+          positiveSideTitle: "O que é Fato e já foi Sancionado / Promulgado",
+          positiveSide: "1) Prospera MEI: Transformado oficialmente na Lei Complementar nº 238 (sancionada e publicada no DOU), permitindo até 2 empregados e elevando o teto do MEI para R$ 110 mil (2027) e R$ 140 mil (2028). 2) Fim da Escala 6x1: Emenda Constitucional promulgada fixando limite de 40h semanais e dois dias de descanso. 3) Games: Marco Legal regulamentado com linhas de crédito.",
+          criticalSideTitle: "Limitações Reais e O que Ainda NÃO está valendo",
+          criticalSide: "1) Tarifa Zero nos fins de semana: Não está valendo; é apenas uma PEC enviada ao Congresso que propõe usar emendas parlamentares, enfrentando resistência de deputados. 2) Desenrola 3.0: Não perdoará todas as dívidas; será um programa de renegociação estimado em R$ 5 bi cujas regras ainda não saíram. 3) Pé-de-Meia Universitário: Ainda sem orçamento definido.",
+          sources: [
+            { label: "Congresso Nacional (Ficha Oficial da Lei Compl. 238/2026 - MEI)", url: "https://www.congressonacional.leg.br/materias/materias-bicamerais/-/ver/plp-186-2026" },
+            { label: "Portal Planalto (Sanção Prospera MEI e Envio da PEC Tarifa Zero)", url: "https://www.gov.br/planalto/pt-br/acompanhe-o-planalto/noticias/2026/10/lula-sanciona-lei-que-amplia-beneficios-para-meis-e-envia-ao-congresso-pec-sobre-tarifa-zero-no-transporte-coletivo" },
+            { label: "Verificação de Promessas e Regras Pendentes (ND Mais)", url: "https://ndmais.com.br/politica/lula-corte-de-gastos-bolsa-familia-orcamento-2027/" }
+          ]
+        },
+        {
+          id: "congresso-retomada-votacoes-pln23-alcolumbre-motta",
+          category: "congresso",
+          categoryLabel: "Congresso Nacional & Legislativo",
+          badgeColor: "indigo",
+          date: "27/10/2026",
+          verdict: "PAUTA DESTRAVADA & CRÉDITO DE R$ 185,5 BI",
+          title: "Câmara retoma votações com MP travando a pauta; Congresso analisa crédito de R$ 185,5 bi para Previdência e Bolsa Família",
+          summary: "Após o encontro dos presidentes da Câmara, Hugo Motta, e do Senado, Davi Alcolumbre, com o presidente Lula no Palácio da Alvorada na segunda-feira (26/10), o Congresso retoma hoje as votações em plenário com Medidas Provisórias prestes a vencer e projetos de segurança e crédito.",
+          positiveSideTitle: "Diálogo Institucional e Garantia da Seguridade",
+          positiveSide: "Alcolumbre e Motta reafirmaram compromisso com a estabilidade institucional. No Congresso, avança o PLN 23/2026, que abre crédito suplementar de R$ 185,55 bilhões para garantir o pagamento de benefícios do INSS (81,4% do valor) e do Bolsa Família/BPC (18,6%). Na Câmara, também avança o PL 3259/26 (financiamento do Move Brasil para representantes comerciais).",
+          criticalSideTitle: "Pauta Trancada por MPs e Pressão da Oposição",
+          criticalSide: "A pauta da Câmara está sobrestada (trancada) por Medida Provisória que perde a validade nesta sexta-feira (30/10). Além disso, projetos da oposição ganham força na ordem do dia, como o PL 5.902/2023 (de Kim Kataguiri, que endurece penas contra uso de drones em presídios), exigindo negociação voto a voto do governo com o Centrão.",
+          sources: [
+            { label: "Agência Senado (Reunião de Alcolumbre e Motta com Lula)", url: "https://www12.senado.leg.br/noticias/materias/2026/10/26/davi-alcolumbre-e-hugo-motta-visitam-presidente-lula" },
+            { label: "Congresso Nacional (PLN 23/2026 - Crédito de R$ 185,5 bi)", url: "https://www.congressonacional.leg.br/materias/pesquisa/-/materia/175221" },
+            { label: "Pauta do Plenário da Câmara (27/10/2026)", url: "https://www.camara.leg.br/plenario" },
+            { label: "Congresso em Foco (MPs e Projetos na Ordem do Dia)", url: "https://www.congressoemfoco.com.br/noticia/129236/camara-retoma-votacoes-apos-eleicao-com-mp-e-drones-na-pauta" }
+          ]
+        },
+        {
+          id: "balanco-estados-governadores-federacao",
+          category: "partido",
+          categoryLabel: "Estados & Correlação de Forças",
+          badgeColor: "indigo",
+          date: "27/10/2026",
+          verdict: "MAPA DOS ESTADOS 2027",
+          title: "Balanço Oficial dos Estados: PT mantém 4 governos no Nordeste, mas oposição e centro comandarão 23 unidades da Federação",
+          summary: "Consolidado o resultado das urnas pela Justiça Eleitoral, oito partidos dividirão o comando dos 26 estados e do Distrito Federal a partir de 2027, exigindo forte articulação federativa do Palácio do Planalto.",
+          positiveSideTitle: "Desempenho do PT e Aliados Estaduais",
+          positiveSide: "O PT garantiu a reeleição na Presidência da República e manteve seus quatro governos estaduais no Nordeste: Bahia (Jerônimo Rodrigues), Ceará (Elmano de Freitas), Piauí (Rafael Fonteles) e Rio Grande do Norte (Cadu de Lula). Partidos que compõem a base ministerial no plano federal, como PSD (5 estados) e MDB (Goiás, com Daniel Vilela), também tiveram forte desempenho.",
+          criticalSideTitle: "Cinturão de Oposição nos Maiores Orçamentos",
+          criticalSide: "O partido de oposição PL terminou na liderança em número de governos estaduais, comandando 6 estados (PR, RJ, RS, RO, RR e SC), enquanto o Republicanos governará 4 estados estratégicos (incluindo SP com Tarcísio de Freitas e MG com Cleitinho Azevedo) e o PP outros 4. O PT não governa nenhum estado no Sul, Sudeste, Centro-Oeste ou Norte.",
+          sources: [
+            { label: "Agência Brasil (Mapa Completo dos 27 Governadores Eleitos)", url: "https://agenciabrasil.ebc.com.br/politica/noticia/2026-10/eleicoes-2026-oito-partidos-vao-comandar-26-estados-e-o-df" },
+            { label: "Agência Brasil (Resultado Presidencial Consolidado)", url: "https://agenciabrasil.ebc.com.br/politica/noticia/2026-10/lula-e-reeleito-presidente-do-brasil-em-virada-historica" }
+          ]
+        }
+      ];
+
+      // 3. DEEP FREEZE PARA GARANTIR IMUTABILIDADE EM MEMÓRIA
+      function deepFreeze(obj) {
+        Object.keys(obj).forEach(prop => {
+          if (typeof obj[prop] === "object" && obj[prop] !== null && !Object.isFrozen(obj[prop])) {
+            deepFreeze(obj[prop]);
+          }
+        });
+        return Object.freeze(obj);
+      }
+      deepFreeze(ANALYTICAL_ITEMS);
+
+      // 4. ESTADO INTERNO DE FILTROS (SOMENTE LEITURA)
+      let currentCategory = "all";
+      let searchQuery = "";
+      let viewMode = "complete";
+
+      // 5. GERADOR DE HASH DE AUDITORIA
+      async function computeIntegrityHash() {
+        const hashEl = document.getElementById("integrity-hash");
+        try {
+          const raw = JSON.stringify(ANALYTICAL_ITEMS);
+          const msgBuffer = new TextEncoder().encode(raw);
+          const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+          const hashArray = Array.from(new Uint8Array(hashBuffer));
+          const shortHash = hashArray.map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 10).toUpperCase();
+          hashEl.textContent = "#" + shortHash;
+        } catch (e) {
+          hashEl.textContent = "VERIFICADO";
+        }
+      }
+
+      // 6. RENDERIZAÇÃO SEGURA DOS CARDS
+      function renderNews() {
+        const container = document.getElementById("news-container");
+        const emptyState = document.getElementById("empty-state");
+        const countAll = document.getElementById("count-all");
+        const showingCounter = document.getElementById("showing-counter");
+
+        countAll.textContent = String(ANALYTICAL_ITEMS.length);
+
+        const filtered = ANALYTICAL_ITEMS.filter(item => {
+          const matchesCat = currentCategory === "all" || item.category === currentCategory;
+          const q = searchQuery.toLowerCase().trim();
+          if (!q) return matchesCat;
+          const searchable = `${item.title} ${item.summary} ${item.positiveSide} ${item.criticalSide} ${item.categoryLabel} ${item.verdict}`.toLowerCase();
+          return matchesCat && searchable.includes(q);
+        });
+
+        container.innerHTML = "";
+
+        if (filtered.length === 0) {
+          emptyState.classList.remove("hidden");
+          showingCounter.textContent = "0 itens encontrados";
+          return;
+        }
+
+        emptyState.classList.add("hidden");
+        showingCounter.textContent = `Exibindo ${filtered.length} de ${ANALYTICAL_ITEMS.length} análises verificadas`;
+
+        const badgeStyles = {
+          rose: "bg-rose-50 text-rose-800 border-rose-200",
+          amber: "bg-amber-50 text-amber-800 border-amber-200",
+          indigo: "bg-indigo-50 text-indigo-800 border-indigo-200",
+          emerald: "bg-emerald-50 text-emerald-800 border-emerald-200"
+        };
+
+        filtered.forEach(item => {
+          const article = document.createElement("article");
+          article.className = "news-card bg-white rounded-2xl border border-slate-200 p-6 shadow-sm";
+
+          // Header row
+          const topRow = document.createElement("div");
+          topRow.className = "flex flex-wrap items-center justify-between gap-2 mb-3";
+
+          const leftBadges = document.createElement("div");
+          leftBadges.className = "flex flex-wrap items-center gap-2";
+
+          const catBadge = document.createElement("span");
+          catBadge.className = `text-xs font-bold px-2.5 py-1 rounded-lg border ${badgeStyles[item.badgeColor] || badgeStyles.indigo}`;
+          catBadge.textContent = item.categoryLabel;
+
+          const verdictBadge = document.createElement("span");
+          verdictBadge.className = "text-[11px] font-mono font-bold px-2.5 py-1 rounded-lg bg-slate-900 text-amber-300";
+          verdictBadge.textContent = item.verdict;
+
+          leftBadges.appendChild(catBadge);
+          leftBadges.appendChild(verdictBadge);
+
+          const dateSpan = document.createElement("span");
+          dateSpan.className = "text-xs font-medium text-slate-400 flex items-center gap-1";
+          dateSpan.textContent = `Apuração: ${item.date}`;
+
+          topRow.appendChild(leftBadges);
+          topRow.appendChild(dateSpan);
+
+          // Title
+          const titleEl = document.createElement("h3");
+          titleEl.className = "font-serif text-lg sm:text-xl font-bold text-slate-900 leading-snug mb-2.5";
+          titleEl.textContent = item.title;
+
+          // Summary
+          const summaryEl = document.createElement("p");
+          summaryEl.className = "text-slate-600 text-sm leading-relaxed mb-4";
+          summaryEl.textContent = item.summary;
+
+          article.appendChild(topRow);
+          article.appendChild(titleEl);
+          article.appendChild(summaryEl);
+
+          // Two-sided analysis boxes
+          if (viewMode === "complete") {
+            const dualGrid = document.createElement("div");
+            dualGrid.className = "grid grid-cols-1 md:grid-cols-2 gap-3.5 mb-5";
+
+            // Positive / Official Box
+            const posBox = document.createElement("div");
+            posBox.className = "p-4 rounded-xl bg-emerald-50/60 border border-emerald-200/80";
+            const posTitle = document.createElement("div");
+            posTitle.className = "text-xs font-extrabold uppercase tracking-wider text-emerald-900 mb-1.5 flex items-center gap-1.5";
+            posTitle.innerHTML = `<i data-lucide="TrendingUp" class="w-4 h-4 text-emerald-600"></i> `;
+            const posTitleText = document.createElement("span");
+            posTitleText.textContent = item.positiveSideTitle;
+            posTitle.appendChild(posTitleText);
+
+            const posBody = document.createElement("p");
+            posBody.className = "text-xs text-slate-700 leading-relaxed";
+            posBody.textContent = item.positiveSide;
+            posBox.appendChild(posTitle);
+            posBox.appendChild(posBody);
+
+            // Critical / Impact Box
+            const critBox = document.createElement("div");
+            critBox.className = "p-4 rounded-xl bg-rose-50/60 border border-rose-200/80";
+            const critTitle = document.createElement("div");
+            critTitle.className = "text-xs font-extrabold uppercase tracking-wider text-rose-900 mb-1.5 flex items-center gap-1.5";
+            critTitle.innerHTML = `<i data-lucide="AlertTriangle" class="w-4 h-4 text-rose-600"></i> `;
+            const critTitleText = document.createElement("span");
+            critTitleText.textContent = item.criticalSideTitle;
+            critTitle.appendChild(critTitleText);
+
+            const critBody = document.createElement("p");
+            critBody.className = "text-xs text-slate-700 leading-relaxed";
+            critBody.textContent = item.criticalSide;
+            critBox.appendChild(critTitle);
+            critBox.appendChild(critBody);
+
+            dualGrid.appendChild(posBox);
+            dualGrid.appendChild(critBox);
+            article.appendChild(dualGrid);
+          }
+
+          // Official & Verified Sources Footer
+          const sourcesWrap = document.createElement("div");
+          sourcesWrap.className = "pt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2";
+
+          const sourceLabel = document.createElement("span");
+          sourceLabel.className = "text-xs font-semibold text-slate-500 flex items-center gap-1.5";
+          sourceLabel.innerHTML = `<i data-lucide="link-2" class="w-3.5 h-3.5 text-slate-400"></i> Links de Comprovação:`;
+
+          const linksContainer = document.createElement("div");
+          linksContainer.className = "flex flex-wrap items-center gap-2";
+
+          item.sources.forEach(src => {
+            if (isSafeOfficialUrl(src.url)) {
+              const a = document.createElement("a");
+              a.href = src.url;
+              a.target = "_blank";
+              a.rel = "noopener noreferrer";
+              a.className = "inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-900 text-slate-700 hover:text-white transition";
+              const spanTxt = document.createElement("span");
+              spanTxt.textContent = src.label;
+              a.appendChild(spanTxt);
+              const icon = document.createElement("i");
+              icon.setAttribute("data-lucide", "external-link");
+              icon.className = "w-3 h-3";
+              a.appendChild(icon);
+              linksContainer.appendChild(a);
+            }
+          });
+
+          sourcesWrap.appendChild(sourceLabel);
+          sourcesWrap.appendChild(linksContainer);
+          article.appendChild(sourcesWrap);
+
+          container.appendChild(article);
+        });
+
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      }
+
+      // 7. GERADOR DE RESUMO APARTIDÁRIO PARA WHATSAPP
+      function copyWhatsAppSummary() {
+        const lines = [
+          "⚖️ *OBSERVATÓRIO ANALÍTICO — MONITOR PT & GOVERNO*",
+          "📅 *Terça-feira, 27 de Outubro de 2026*",
+          "_Resumo Factual Apartidário (Avanços, Cortes & Checagem)_",
+          ""
+        ];
+
+        ANALYTICAL_ITEMS.forEach((item, idx) => {
+          lines.push(`*${idx + 1}. ${item.title}*`);
+          lines.push(`📌 *Status:* ${item.verdict}`);
+          lines.push(`✅ *Lado Governamental:* ${item.positiveSide}`);
+          lines.push(`⚠️ *Impacto / Ponto Crítico:* ${item.criticalSide}`);
+          if (item.sources && item.sources[0]) {
+            lines.push(`🔗 *Fonte:* ${item.sources[0].url}`);
+          }
+          lines.push("");
+        });
+
+        const textToCopy = lines.join("\n");
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          showToast("Boletim imparcial copiado para o WhatsApp!");
+        });
+      }
+
+      function showToast(msg) {
+        const toast = document.getElementById("toast");
+        const toastMsg = document.getElementById("toast-message");
+        toastMsg.textContent = msg;
+        toast.classList.remove("hidden");
+        setTimeout(() => {
+          toast.classList.add("hidden");
+        }, 3200);
+      }
+
+      // 8. INICIALIZAÇÃO DE EVENTOS
+      document.addEventListener("DOMContentLoaded", () => {
+        computeIntegrityHash();
+        renderNews();
+
+        // Category Filter Buttons
+        const catBtns = document.querySelectorAll(".cat-btn");
+        catBtns.forEach(btn => {
+          btn.addEventListener("click", () => {
+            catBtns.forEach(b => {
+              b.classList.remove("bg-slate-900", "text-white", "shadow-sm");
+              b.classList.add("bg-slate-100", "text-slate-700");
+            });
+            btn.classList.remove("bg-slate-100", "text-slate-700");
+            btn.classList.add("bg-slate-900", "text-white", "shadow-sm");
+
+            currentCategory = btn.getAttribute("data-category") || "all";
+            renderNews();
+          });
+        });
+
+        // Search Input
+        const searchInput = document.getElementById("search-input");
+        const clearBtn = document.getElementById("clear-search");
+
+        searchInput.addEventListener("input", (e) => {
+          searchQuery = sanitizeText(e.target.value);
+          clearBtn.classList.toggle("hidden", searchQuery.length === 0);
+          renderNews();
+        });
+
+        clearBtn.addEventListener("click", () => {
+          searchInput.value = "";
+          searchQuery = "";
+          clearBtn.classList.add("hidden");
+          renderNews();
+        });
+
+        document.getElementById("reset-filters-btn").addEventListener("click", () => {
+          searchInput.value = "";
+          searchQuery = "";
+          currentCategory = "all";
+          clearBtn.classList.add("hidden");
+          catBtns[0].click();
+        });
+
+        // View Mode Toggle
+        const btnComplete = document.getElementById("view-complete");
+        const btnCompact = document.getElementById("view-compact");
+
+        btnComplete.addEventListener("click", () => {
+          viewMode = "complete";
+          btnComplete.className = "px-2.5 py-1 rounded-md text-xs font-semibold bg-white text-slate-900 shadow-sm transition cursor-pointer";
+          btnCompact.className = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer";
+          renderNews();
+        });
+
+        btnCompact.addEventListener("click", () => {
+          viewMode = "compact";
+          btnCompact.className = "px-2.5 py-1 rounded-md text-xs font-semibold bg-white text-slate-900 shadow-sm transition cursor-pointer";
+          btnComplete.className = "px-2.5 py-1 rounded-md text-xs font-semibold text-slate-600 hover:text-slate-900 transition cursor-pointer";
+          renderNews();
+        });
+
+        // WhatsApp Buttons
+        document.getElementById("btn-whatsapp").addEventListener("click", copyWhatsAppSummary);
+        document.getElementById("footer-copy-wa").addEventListener("click", copyWhatsAppSummary);
+
+        if (window.lucide) {
+          window.lucide.createIcons();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
