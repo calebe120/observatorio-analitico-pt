@@ -5,7 +5,78 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="X-Content-Type-Options" content="nosniff" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
-  <title>Observatório Analítico — Monitor PT & Governo Federal</title>
+  
+  <!-- Google Search Console Verification -->
+  <meta name="google-site-verification" content="Ql9H_LBiGLu6aVchdO6Te4wUNO9R9BNM90-rcWHlBfA" />
+
+  <!-- Primary SEO Meta Tags -->
+  <title>Observatório Analítico — Monitor PT & Governo Federal | Fatos, Cortes e Leis</title>
+  <meta name="title" content="Observatório Analítico — Monitor PT & Governo Federal | Fatos, Cortes e Leis" />
+  <meta name="description" content="Monitoramento diário, apartidário e factual sobre o Governo Federal, PT e Congresso Nacional. Confira onde haverá corte de gastos em 2027, Fim da Escala 6x1, Prospera MEI, Tarifa Zero e checagem de boatos com links oficiais." />
+  <meta name="keywords" content="Observatório Analítico PT, Governo Federal, corte de gastos 2027, fim da escala 6x1, Prospera MEI, Lei Complementar 238, Bolsa Família 2026, Tarifa Zero PEC, Congresso Nacional, checagem de fatos, orçamento 2027" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="author" content="Observatório Analítico" />
+  <link rel="canonical" href="https://observatorioanaliticopt.vercel.app/" />
+
+  <!-- Open Graph / WhatsApp / Facebook / LinkedIn -->
+  <meta property="og:type" content="website" />
+  <meta property="og:locale" content="pt_BR" />
+  <meta property="og:url" content="https://observatorioanaliticopt.vercel.app/" />
+  <meta property="og:site_name" content="Observatório Analítico — PT & Governo" />
+  <meta property="og:title" content="Observatório Analítico — Monitor PT & Governo Federal (Fato vs. Boato)" />
+  <meta property="og:description" content="Análise diária sem partidarismo: entregas, cortes de gastos no orçamento, votações no Congresso e checagem de leis (Escala 6x1, Prospera MEI, Diesel e Mercado) com links oficiais." />
+
+  <!-- Twitter / X Cards -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://observatorioanaliticopt.vercel.app/" />
+  <meta name="twitter:title" content="Observatório Analítico — Monitor PT & Governo Federal" />
+  <meta name="twitter:description" content="Resumo diário imparcial com fontes governamentais: cortes no orçamento, reação do mercado, Congresso e checagem Fato vs. Boato." />
+
+  <!-- Structured Data (Schema.org JSON-LD for Google Rich Results & FAQ) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "name": "Observatório Analítico — Monitor PT & Governo Federal",
+        "url": "https://observatorioanaliticopt.vercel.app/",
+        "description": "Monitoramento diário apartidário do Governo Federal, PT e Congresso Nacional com links oficiais do Planalto, Câmara, Senado, Tesouro e IFI.",
+        "inLanguage": "pt-BR"
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Haverá corte de gastos no Governo Federal em 2027?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Sim. O Ministério da Fazenda confirmou remanejamento de R$ 20 bilhões e estuda ampliar contingenciamentos, enquanto a Instituição Fiscal Independente (IFI) do Senado projeta necessidade de bloqueio de R$ 35,7 bilhões em despesas discricionárias."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O Bolsa Família vai ser cortado em 2026 ou 2027?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Não há anúncio de corte no benefício. O piso foi reajustado para R$ 691 em outubro de 2026 (média de R$ 777), e o PLN 23/2026 suplementa a Seguridade Social em R$ 185,5 bilhões."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "O Fim da Escala 6x1 e o Prospera MEI já estão valendo?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "O Prospera MEI foi sancionado como Lei Complementar nº 238/2026 (elevando gradualmente o teto para R$ 110 mil em 2027 e R$ 140 mil em 2028). A Emenda Constitucional que encerra a escala 6x1 (fixando limite de 40h semanais) foi promulgada pelo Congresso e possui transição escalonada."
+            }
+          }
+        ]
+      }
+    ]
+  }
+  </script>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,7 +147,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         
-        <!-- Brand Identity (Clean, no Edition badge) -->
+        <!-- Brand Identity -->
         <div class="flex items-start sm:items-center gap-3.5">
           <div class="w-12 h-12 rounded-2xl bg-slate-900 flex items-center justify-center text-white shadow-md shrink-0">
             <i data-lucide="Landmark" class="w-6 h-6 text-amber-400"></i>
@@ -116,7 +187,7 @@
           <button 
             id="btn-whatsapp" 
             class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition cursor-pointer"
-            title="Copiar resumo imparcial para WhatsApp"
+            title="Copiar resumo imparcial com link do site para WhatsApp"
           >
             <i data-lucide="share-2" class="w-4 h-4"></i>
             <span>Disparo WhatsApp</span>
@@ -128,7 +199,7 @@
       <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-4 overflow-x-auto custom-scrollbar pb-1">
         <div class="flex items-center gap-1.5" id="category-filters">
           <button data-category="all" class="cat-btn active px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-900 text-white shadow-sm cursor-pointer whitespace-nowrap">
-            Visão Geral (<span id="count-all">0</span>)
+            Visão Geral (<span id="count-all">5</span>)
           </button>
           <button data-category="fiscal" class="cat-btn px-3.5 py-1.5 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-700 hover:bg-slate-200 cursor-pointer whitespace-nowrap flex items-center gap-1.5">
             <i data-lucide="trending-down" class="w-3.5 h-3.5 text-rose-700"></i> Orçamento, Cortes & Mercado
@@ -421,6 +492,8 @@
   <script>
     (function() {
       "use strict";
+
+      const SITE_PUBLIC_URL = "https://observatorioanaliticopt.vercel.app/";
 
       // 1. ALLOWLIST DE DOMÍNIOS VERIFICADOS E NÃO SENSACIONALISTAS
       const ALLOWED_DOMAINS = Object.freeze([
@@ -751,11 +824,12 @@
         }
       }
 
-      // 7. GERADOR DE RESUMO APARTIDÁRIO PARA WHATSAPP
+      // 7. GERADOR DE RESUMO APARTIDÁRIO PARA WHATSAPP COM LINK DO SITE
       function copyWhatsAppSummary() {
         const lines = [
           "⚖️ *OBSERVATÓRIO ANALÍTICO — MONITOR PT & GOVERNO*",
           "📅 *Terça-feira, 27 de Outubro de 2026*",
+          `🌐 *Painel Completo e Checagem:* ${SITE_PUBLIC_URL}`,
           "_Resumo Factual Apartidário (Avanços, Cortes & Checagem)_",
           ""
         ];
@@ -766,14 +840,16 @@
           lines.push(`✅ *Lado Governamental:* ${item.positiveSide}`);
           lines.push(`⚠️ *Impacto / Ponto Crítico:* ${item.criticalSide}`);
           if (item.sources && item.sources[0]) {
-            lines.push(`🔗 *Fonte:* ${item.sources[0].url}`);
+            lines.push(`🔗 *Fonte Oficial:* ${item.sources[0].url}`);
           }
           lines.push("");
         });
 
+        lines.push(`📲 *Confira todos os links oficiais e o Painel Fato vs. Boato em:* ${SITE_PUBLIC_URL}`);
+
         const textToCopy = lines.join("\n");
         navigator.clipboard.writeText(textToCopy).then(() => {
-          showToast("Boletim imparcial copiado para o WhatsApp!");
+          showToast("Boletim com link do site copiado para o WhatsApp!");
         });
       }
 
