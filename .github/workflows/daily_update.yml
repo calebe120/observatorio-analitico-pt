@@ -1,0 +1,34 @@
+name: Atualizacao Diaria Observatorio Analitico
+
+on:
+  schedule:
+    # 12:00 UTC equivale a 09:00 AM no horario de Brasilia (BRT)
+    - cron: '0 12 * * *'
+  workflow_dispatch: # Permite rodar manualmente com 1 clique quando quiser testar
+
+permissions:
+  contents: write
+
+jobs:
+  atualizar-boletim:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar codigo do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Coletar Fontes Oficiais e Gerar Analise com Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python scripts/update_news.py
+
+      - name: Publicar atualizacao no GitHub (Dispara Deploy na Vercel)
+        run: |
+          git config --global user.name "Observatorio Bot"
+          git config --global user.email "bot@observatorioanalitico.app"
+          git add news_data.json
+          git diff --staged --quiet || (git commit -m "Atualizacao automatica do boletim diario" && git push)
