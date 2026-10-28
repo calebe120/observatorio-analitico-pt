@@ -45,7 +45,7 @@ for nome_fonte, url in FEEDS:
 
 bloco_noticias = "\n".join(noticias_coletadas[:22])
 
-# 2. Chamada à API do Gemini para Análise Imparcial e Checagem
+# 2. Chamada à API do Gemini com suporte a tokens AQ... e AIzaSy...
 api_key = os.environ.get("GEMINI_API_KEY")
 if not api_key:
     raise RuntimeError("A variável GEMINI_API_KEY não foi configurada nos Secrets do GitHub.")
@@ -91,8 +91,18 @@ payload = json.dumps({
     }
 }).encode("utf-8")
 
-gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-req = urllib.request.Request(gemini_url, data=payload, headers={"Content-Type": "application/json"})
+# Detecta se é a chave tradicional (AIzaSy) ou o novo token Bearer (AQ...)
+if api_key.startswith("AIzaSy"):
+    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
+    headers = {"Content-Type": "application/json"}
+else:
+    gemini_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+
+req = urllib.request.Request(gemini_url, data=payload, headers=headers)
 
 with urllib.request.urlopen(req, timeout=60) as resp:
     result = json.loads(resp.read().decode("utf-8"))
