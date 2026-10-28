@@ -1,6 +1,7 @@
 import os
 import json
 import urllib.request
+import urllib.error
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone, timedelta
 
@@ -20,7 +21,7 @@ dias_semana = {
 agora = datetime.now(BRT)
 data_extenso = f"{dias_semana[agora.weekday()]}, {agora.day} de {meses[agora.month]} de {agora.year}"
 
-# 1. Coleta de Feeds Oficiais (Agência Brasil, Senado e Câmara)
+# 1. Coleta de Feeds Oficiais (Agência Brasil e Senado)
 FEEDS = [
     ("Agência Brasil - Política", "https://agenciabrasil.ebc.com.br/rss/politica/feed.xml"),
     ("Agência Brasil - Economia", "https://agenciabrasil.ebc.com.br/rss/economia/feed.xml"),
@@ -35,17 +36,17 @@ for nome_fonte, url in FEEDS:
         with urllib.request.urlopen(req, timeout=15) as response:
             xml_data = response.read()
             root = ET.fromstring(xml_data)
-            for item in root.findall('.//item')[:8]:
+            for item in root.findall('.//item')[:6]:
                 titulo = item.findtext('title') or ''
                 link = item.findtext('link') or ''
                 desc = item.findtext('description') or ''
-                noticias_coletadas.append(f"[{nome_fonte}] Título: {titulo} | Resumo: {desc[:250]} | Link: {link}")
+                noticias_coletadas.append(f"[{nome_fonte}] Título: {titulo} | Resumo: {desc[:200]} | Link: {link}")
     except Exception as e:
         print(f"Aviso ao ler {nome_fonte}: {e}")
 
-bloco_noticias = "\n".join(noticias_coletadas[:22])
+bloco_noticias = "\n".join(noticias_coletadas[:18])
 
-# 2. Chamada à API do Gemini com suporte a tokens AQ... e AIzaSy...
+# 2. Configuração da Chave da API
 api_key = os.environ.get("GEMINI_API_KEY")
 if not api_key:
     raise RuntimeError("A variável GEMINI_API_KEY não foi configurada nos Secrets do GitHub.")
@@ -54,26 +55,26 @@ prompt = f"""
 Você é o editor-chefe apartidário do portal 'Observatório Analítico — Monitor PT & Governo Federal'.
 Data de hoje: {data_extenso} ({hoje_str}).
 
-Abaixo estão as notícias oficiais coletadas hoje da Agência Brasil e Agência Senado:
+Abaixo estão as notícias oficiais coletadas hoje:
 {bloco_noticias}
 
-Gere um JSON estrito (sem formatação markdown) contendo:
+Gere um JSON estrito (sem formatação markdown, apenas o objeto JSON puro) contendo:
 1. "updatedDate": "{hoje_str}"
 2. "fullDateText": "{data_extenso}"
 3. "items": lista com 6 análises principais do dia. Cada item deve ter:
    - "id": identificador único (slug)
    - "category": escolha apenas entre "fiscal", "checagem", "congresso" ou "partido"
    - "categoryLabel": nome legível da categoria
-   - "badgeColor": "rose" (para fiscal), "emerald" (para checagem), "indigo" (para congresso/partido) ou "amber" (para economia/tributos)
+   - "badgeColor": "rose", "emerald", "indigo" ou "amber"
    - "date": "{hoje_str}"
-   - "verdict": selo curto em maiúsculas (ex: "EM VOTAÇÃO NO CONGRESSO", "MEDIDA OFICIAL", "CORTE ORÇAMENTÁRIO")
+   - "verdict": selo curto em maiúsculas (ex: "EM VOTAÇÃO NO CONGRESSO", "MEDIDA OFICIAL")
    - "title": título jornalístico imparcial e direto
    - "summary": resumo factual contextualizado
    - "positiveSideTitle": título do argumento governamental/avanço
-   - "positiveSide": explicação técnica do ponto positivo ou posição oficial do governo
-   - "criticalSideTitle": título do impacto fiscal, cobrança, risco ou ponto crítico da oposição/mercado
-   - "criticalSide": explicação técnica do ponto crítico, custo ou limitação prática
-   - "sources": lista de objetos [{{"label": "Nome da Fonte Oficial", "url": "URL real retirada da lista acima"}}]
+   - "positiveSide": explicação técnica do ponto positivo ou posição oficial
+   - "criticalSideTitle": título do impacto fiscal ou ponto crítico
+   - "criticalSide": explicação técnica do ponto crítico ou limitação
+   - "sources": lista de objetos [{{"label": "Nome da Fonte", "url": "URL real retirada da lista acima"}}]
 4. "factChecks": lista com 5 itens de checagem (Fato vs. Boato). Cada item deve ter:
    - "question": pergunta direta que o cidadão pesquisa
    - "status": selo curto ("CONFIRMADO", "BOATO / FALSO", "LEI SANCIONADA", "AINDA NÃO VALE")
@@ -91,7 +92,7 @@ payload = json.dumps({
     }
 }).encode("utf-8")
 
-# Detecta se é a chave tradicional (AIzaSy) ou o novo token Bearer (AQ...)
+# Suporte universal para chave tradicional ou token Bearer
 if api_key.startswith("AIzaSy"):
     gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
     headers = {"Content-Type": "application/json"}
@@ -102,14 +103,20 @@ else:
         "Authorization": f"Bearer {api_key}"
     }
 
-req = urllib.request.Request(gemini_url, data=payload, headers=headers)
+try:
+    req = urllib.request.Request(gemini_url, data=payload, headers=headers)
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        result = json.loads(resp.read().decode("utf-8"))
+        texto_json = result["candidates"][0]["content"]["parts"][0]["text"]
+        dados_finais = json.loads(texto_json)
 
-with urllib.request.urlopen(req, timeout=60) as resp:
-    result = json.loads(resp.read().decode("utf-8"))
-    texto_json = result["candidates"][0]["content"]["parts"][0]["text"]
-    dados_finais = json.loads(texto_json)
+    with open("news_data.json", "w", encoding="utf-8") as f:
+        json.dump(dados_finais, f, ensure_ascii=False, indent=2)
 
-with open("news_data.json", "w", encoding="utf-8") as f:
-    json.dump(dados_finais, f, ensure_ascii=False, indent=2)
-
-print("news_data.json atualizado com sucesso!")
+    print("news_data.json atualizado com sucesso!")
+except urllib.error.HTTPError as e:
+    print(f"Erro HTTP da API Gemini: {e.code} - {e.read().decode('utf-8')}")
+    raise e
+except Exception as e:
+    print(f"Erro inesperado: {e}")
+    raise e
